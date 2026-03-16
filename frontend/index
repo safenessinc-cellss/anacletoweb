@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anacleto Esquadrias · Soluções em Vidro e Alumínio no RS</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: similar a la original (Open Sans o Roboto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;  /* fondo blanco original */
+            color: #333;
+            line-height: 1.6;
+        }
+        /* barra de navegación (fondo oscuro original) */
+        .navbar {
+            background-color: #1a2b3c;   /* azul oscuro/negro del sitio original */
+            color: white;
+            padding: 1rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .logo span {
+            color: #f0b800;   /* dorado/amarillo del original */
+            font-size: 1rem;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: #f0b800;
+            border-bottom-color: #f0b800;
+        }
+        .nav-links .btn-schedule {
+            background-color: #f0b800;
+            color: #1a2b3c;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            border: none;
+        }
+        .nav-links .btn-schedule:hover {
+            background-color: #ffcc33;
+            color: #1a2b3c;
+            border-bottom-color: transparent;
+        }
+        /* contenido principal */
+        #page-content {
+            padding: 2rem 5% 4rem;
+            max-width: 1300px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        /* footer (original oscuro) */
+        .footer {
+            background-color: #1a2b3c;
+            color: #ccc;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 3px solid #f0b800;
+            font-size: 0.95rem;
+        }
+        /* tipografías y títulos */
+        h1, h2, h3 {
+            font-weight: 600;
+            color: #1a2b3c;
+        }
+        h2 {
+            color: #1a2b3c;
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background-color: #f0b800;
+        }
+        .hero {
+            background: linear-gradient(135deg, #1a2b3c 0%, #2c4058 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .hero h1 {
+            color: white;
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #eee;
+        }
+        .btn-primary {
+            background-color: #f0b800;
+            color: #1a2b3c;
+            border: none;
+            padding: 0.8rem 2.5rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary:hover {
+            background-color: #ffcc33;
+            transform: scale(1.02);
+        }
+        /* tarjetas y grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .card {
+            background-color: #f8f9fa;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .card-img {
+            width: 100%;
+            height: 200px;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a2b3c;
+            font-size: 3rem;
+            background-size: cover;
+            background-position: center;
+        }
+        .card-content {
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a2b3c;
+            margin-bottom: 0.5rem;
+        }
+        .card-sub {
+            color: #f0b800;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .departamentos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .depto-item {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f0f3f7;
+            border-radius: 12px;
+        }
+        .depto-item i {
+            font-size: 3rem;
+            color: #f0b800;
+            margin-bottom: 1rem;
+        }
+        .depto-item h3 {
+            margin-bottom: 0.5rem;
+        }
+        /* seção contato (original) */
+        .contato-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            background-color: #f0f3f7;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-top: 2rem;
+        }
+        .info-contato p {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-contato i {
+            color: #f0b800;
+            width: 25px;
+            font-size: 1.2rem;
+        }
+        .horario {
+            background-color: #1a2b3c;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+        .horario h4 {
+            color: #f0b800;
+            margin-bottom: 1rem;
+        }
+        /* formularios (manteniendo identidad) */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus {
+            border-color: #f0b800;
+            outline: none;
+        }
+        /* chat flotante (mismo estilo) */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 350px;
+            background-color: white;
+            border: 2px solid #f0b800;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, opacity 0.3s;
+            transform: scale(0);
+            opacity: 0;
+            transform-origin: bottom right;
+        }
+        .chat-widget.open {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .chat-header {
+            background-color: #1a2b3c;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+        }
+        .chat-header button {
+            background: none;
+            border: none;
+            color: #f0b800;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .message {
+            padding: 0.6rem 1rem;
+            border-radius: 18px;
+            max-width: 80%;
+        }
+        .message.user {
+            background-color: #f0b800;
+            color: #1a2b3c;
+            align-self: flex-end;
+        }
+        .message.bot {
+            background-color: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 1rem;
+            background-color: white;
+            border-top: 1px solid #ddd;
+        }
+        .chat-input-area input {
+            flex: 1;
+            border-radius: 40px;
+            border: 1px solid #ccc;
+            padding: 0.7rem 1rem;
+        }
+        .chat-input-area button {
+            background-color: #f0b800;
+            border: none;
+            border-radius: 40px;
+            width: 45px;
+            height: 45px;
+            margin-left: 0.5rem;
+            color: #1a2b3c;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .chat-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #f0b800;
+            color: #1a2b3c;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(240, 184, 0, 0.4);
+            z-index: 999;
+            border: none;
+        }
+        /* responsive */
+        @media (max-width: 800px) {
+            .navbar { flex-direction: column; gap: 1rem; }
+            .contato-grid { grid-template-columns: 1fr; }
+            h2 { font-size: 1.8rem; }
+            .hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar (colores originales) -->
+    <nav class="navbar">
+        <div class="logo">ANACLETO <span>esquadrias</span></div>
+        <div class="nav-links">
+            <a href="#" class="nav-page active" data-page="home">Início</a>
+            <a href="#" class="nav-page" data-page="portfolio">Trabalhos</a>
+            <a href="#" class="nav-page" data-page="schedule">Agendar visita</a>
+            <a href="#" class="nav-page" data-page="budget">Orçamento IA</a>
+            <a href="#" class="btn-schedule nav-page" data-page="schedule"><i class="fas fa-calendar-check"></i> Visita técnica</a>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div id="page-content"></div>
+
+    <!-- Footer original -->
+    <footer class="footer">
+        <p>© 2026 Anacleto Esquadrias · Todos os direitos reservados · Matriz São Leopoldo - RS</p>
+        <p style="margin-top:0.5rem;">(51) 3592-1234 · projetos@anacletoesquadrias.com.br</p>
+    </footer>
+
+    <!-- Chat flotante -->
+    <div class="chat-toggle" id="chatToggle"><i class="fas fa-comment-dots"></i></div>
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <span><i class="fas fa-robot" style="margin-right: 8px;"></i> Assistente Anacleto</span>
+            <button id="closeChat"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Olá! Sou o assistente virtual da Anacleto. Posso ajudar com orçamentos, visitas ou projetos.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Digite sua mensagem...">
+            <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Páginas dinámicas con contenido idéntico al sitio original
+            const pageContent = document.getElementById('page-content');
+            const navLinks = document.querySelectorAll('.nav-page');
+
+            // Datos de proyectos (exactamente del sitio original)
+            const projects = [
+                { title: 'Edifício Corporate Tower', location: 'Centro Histórico - Porto Alegre', desc: 'Fachada envidraçada para edifício corporativo de 18 andares.', image: 'fa-building' },
+                { title: 'Shopping Total Canoas', location: 'Canoas - RS', desc: 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', image: 'fa-store' },
+                { title: 'Hospital Municipal NH', location: 'Novo Hamburgo - Vale do Sinos', desc: 'Sistemas de divisórias e fachadas para áreas médicas.', image: 'fa-hospital' },
+                { title: 'Residencial Alphaville', location: 'Porto Alegre - RS', desc: 'Esquadrias de alumínio para condomínio de alto padrão.', image: 'fa-home' }
+            ];
+
+            // Departamentos originales
+            const deptos = [
+                { nome: 'Projetos e Design', icon: 'fa-pen-ruler', desc: 'Projetos personalizados com foco em soluções inovadoras.' },
+                { nome: 'Produção', icon: 'fa-industry', desc: 'Fabricação com tecnologia de última geração em São Leopoldo.' },
+                { nome: 'Qualidade', icon: 'fa-clipboard-check', desc: 'Controle rigoroso para excelência dos produtos gaúchos.' },
+                { nome: 'Instalação', icon: 'fa-toolbox', desc: 'Montagem profissional em toda a Região Metropolitana.' }
+            ];
+
+            function loadPage(page) {
+                let html = '';
+                if (page === 'home') {
+                    html = `
+                        <!-- Hero con título original -->
+                        <div class="hero">
+                            <h1>Soluções Inovadoras em Vidro e Alumínio para o RS</h1>
+                            <p>Especialistas em esquadrias de alta qualidade, com tecnologia de ponta, atendendo a Região Metropolitana de Porto Alegre há mais de 20 anos.</p>
+                            <a href="#" class="btn-primary nav-page" data-page="budget">Solicitar Orçamento</a>
+                        </div>
+
+                        <!-- Tecnologia de Ponta (cards) -->
+                        <h2>Tecnologia de Ponta Gaúcha</h2>
+                        <p style="margin-bottom:2rem;">Produtos inovadores que combinam design, eficiência energética e durabilidade para o clima do Rio Grande do Sul.</p>
+                        <div class="card-grid">
+                            <div class="card">
+                                <div class="card-img"><i class="fas fa-window-maximize" style="font-size:4rem;"></i></div>
+                                <div class="card-content"><h3>Esquadrias Residenciais</h3><p>Portas, janelas e fachadas para residências com conforto térmico e acústico.</p></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-img"><i class="fas fa-building" style="font-size:4rem;"></i></div>
+                                <div class="card-content"><h3>Fachadas Corporativas</h3><p>Sistemas de alta eficiência energética para edifícios comerciais.</p></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-img"><i class="fas fa-shield" style="font-size:4rem;"></i></div>
+                                <div class="card-content"><h3>Vidro Laminado</h3><p>Proteção e segurança sem comprometer estética e transparência.</p></div>
+                            </div>
+                        </div>
+
+                        <!-- Nossos Departamentos (íconos) -->
+                        <h2>Nossos Departamentos</h2>
+                        <div class="departamentos">
+                            ${deptos.map(d => `
+                                <div class="depto-item">
+                                    <i class="fas ${d.icon}"></i>
+                                    <h3>${d.nome}</h3>
+                                    <p>${d.desc}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Alguns trabalhos (projetos) -->
+                        <h2>Alguns dos Nossos Trabalhos</h2>
+                        <div class="card-grid">
+                            ${projects.map(p => `
+                                <div class="card">
+                                    <div class="card-img"><i class="fas ${p.image}"></i></div>
+                                    <div class="card-content">
+                                        <div class="card-sub">${p.location}</div>
+                                        <div class="card-title">${p.title}</div>
+                                        <p>${p.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Contato (exactamente como el original) -->
+                        <h2>Entre em Contato</h2>
+                        <div class="contato-grid">
+                            <div>
+                                <p style="margin-bottom:2rem;">Preencha o formulário e nossa equipe em São Leopoldo entrará em contato. Atendemos toda a Região Metropolitana de Porto Alegre.</p>
+                                <form id="contactForm">
+                                    <div class="form-group"><input type="text" placeholder="Seu nome" required></div>
+                                    <div class="form-group"><input type="email" placeholder="Seu e-mail" required></div>
+                                    <div class="form-group"><input type="tel" placeholder="Telefone"></div>
+                                    <div class="form-group"><textarea rows="4" placeholder="Sua mensagem"></textarea></div>
+                                    <button type="submit" class="btn-primary">Enviar mensagem</button>
+                                </form>
+                            </div>
+                            <div class="info-contato">
+                                <h3>Informações de Contato</h3>
+                                <p><i class="fas fa-map-pin"></i> <strong>Matriz São Leopoldo:</strong> Rua Independência, 1234, Centro, São Leopoldo - RS, CEP: 93010-000</p>
+                                <p><i class="fas fa-phone"></i> (51) 3592-1234 - Comercial<br> (51) 3592-5678 - Projetos<br> (51) 99999-1234 - WhatsApp</p>
+                                <p><i class="fas fa-envelope"></i> projetos@anacletoesquadrias.com.br<br>vendas@anacletoesquadrias.com.br<br>orcamento@anacletoesquadrias.com.br</p>
+                                <div class="horario">
+                                    <h4>Horário de Atendimento</h4>
+                                    <p>Segunda a Sexta: 8:00 - 18:00<br>Sábado: 8:00 - 12:00 (somente com agendamento)</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (page === 'portfolio') {
+                    html = `<h2>Projetos Realizados</h2><div class="card-grid">${projects.map(p => `
+                        <div class="card"><div class="card-img"><i class="fas ${p.image}"></i></div><div class="card-content"><div class="card-sub">${p.location}</div><div class="card-title">${p.title}</div><p>${p.desc}</p></div></div>
+                    `).join('')}</div>`;
+                } else if (page === 'schedule') {
+                    html = `
+                        <h2>Agendar Visita Técnica</h2>
+                        <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
+                            <form id="scheduleForm">
+                                <div class="form-group"><label>Nome</label><input type="text" required></div>
+                                <div class="form-group"><label>E-mail</label><input type="email" required></div>
+                                <div class="form-group"><label>Telefone</label><input type="tel"></div>
+                                <div class="form-group"><label>Data preferencial</label><input type="date" required></div>
+                                <div class="form-group"><label>Horário</label><select><option>Manhã (8h-12h)</option><option>Tarde (13h-18h)</option></select></div>
+                                <button type="submit" class="btn-primary">Agendar</button>
+                            </form>
+                        </div>
+                    `;
+                } else if (page === 'budget') {
+                    html = `
+                        <h2>Orçamento com IA</h2>
+                        <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
+                            <form id="budgetForm">
+                                <div class="form-group"><label>Tipo de esquadria</label><select><option>Janela</option><option>Porta</option><option>Fachada</option><option>Divisória</option></select></div>
+                                <div class="form-group"><label>Dimensões (L x A em metros)</label><input type="text" placeholder="Ex: 2.5 x 1.8"></div>
+                                <div class="form-group"><label>Material</label><select><option>Alumínio branco</option><option>Alumínio anodizado</option><option>Vidro laminado</option></select></div>
+                                <div class="form-group"><label>Detalhes adicionais</label><textarea rows="4"></textarea></div>
+                                <button type="submit" class="btn-primary">Gerar orçamento com IA</button>
+                            </form>
+                        </div>
+                    `;
+                }
+                pageContent.innerHTML = html;
+
+                // Simulação de envio dos formulários
+                document.getElementById('contactForm')?.addEventListener('submit', (e) => { e.preventDefault(); alert('Mensagem enviada (simulação). Em breve retornaremos.'); });
+                document.getElementById('scheduleForm')?.addEventListener('submit', (e) => { e.preventDefault(); alert('Visita agendada (simulação). Confirmação enviada por e-mail.'); });
+                document.getElementById('budgetForm')?.addEventListener('submit', (e) => { e.preventDefault(); alert('Orçamento gerado com IA (simulação). Verifique seu e-mail.'); });
+            }
+
+            // Navegação
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.dataset.page;
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    loadPage(page);
+                });
+            });
+            loadPage('home');
+
+            // Chat flotante (funcional)
+            const chatToggle = document.getElementById('chatToggle');
+            const chatWidget = document.getElementById('chatWidget');
+            const closeChat = document.getElementById('closeChat');
+            const sendChat = document.getElementById('sendChat');
+            const chatInput = document.getElementById('chatInput');
+            const chatMessages = document.getElementById('chatMessages');
+
+            chatToggle.addEventListener('click', () => chatWidget.classList.toggle('open'));
+            closeChat.addEventListener('click', () => chatWidget.classList.remove('open'));
+
+            function addMessage(text, sender) {
+                const msgDiv = document.createElement('div');
+                msgDiv.classList.add('message', sender);
+                msgDiv.textContent = text;
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            sendChat.addEventListener('click', () => {
+                const msg = chatInput.value.trim();
+                if (!msg) return;
+                addMessage(msg, 'user');
+                chatInput.value = '';
+                setTimeout(() => {
+                    const respostas = ['Olá! Em que posso ajudar?', 'Posso agendar uma visita técnica para você.', 'Gostaria de um orçamento personalizado?', 'Nossos modelos: ChatGPT, Gemini, Claude. Qual prefere?'];
+                    addMessage(respostas[Math.floor(Math.random() * respostas.length)], 'bot');
+                }, 800);
+            });
+
+            chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat.click(); });
+        })();
+    </script>
+</body>
+</html>
