@@ -1,0 +1,4 @@
+"dependencies": {
+  "mysql2": "^3.9.0",
+  ... (el resto de dependencias)
+}
