@@ -1,10 +1,5 @@
 {
-  "name": "anacletoweb",
-  "version": "1.0.0",
-  "scripts": {
-    "dev": "vercel dev"
-  },
   "dependencies": {
-    "cohere-ai": "^7.0.0"
+    "@google/generative-ai": "^0.1.0"
   }
 }
