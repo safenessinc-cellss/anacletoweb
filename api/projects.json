@@ -1,5 +1,14 @@
 [
-  {
+{
+  "name": "anacletoweb",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "cohere-ai": "^6.2.0"
+  }
+}  {
     "titulo": "Edifício Corporate Tower",
     "local": "Centro Histórico - Porto Alegre",
     "descricao": "Fachada envidraçada para edifício corporativo de 18 andares.",
