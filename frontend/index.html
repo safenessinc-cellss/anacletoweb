@@ -7,12 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* (mismos estilos que antes) */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* ========== ESTILOS IGUAIS AOS SEUS ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
@@ -250,97 +246,13 @@
             border-color: #f0b800;
             outline: none;
         }
-        .chat-widget {
+        /* Estilos do botão WhatsApp */
+        .whatsapp-toggle {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 350px;
-            background-color: white;
-            border: 2px solid #f0b800;
-            border-radius: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            z-index: 1000;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s, opacity 0.3s;
-            transform: scale(0);
-            opacity: 0;
-            transform-origin: bottom right;
-        }
-        .chat-widget.open {
-            transform: scale(1);
-            opacity: 1;
-        }
-        .chat-header {
-            background-color: #1a2b3c;
+            background-color: #25D366;
             color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-        }
-        .chat-header button {
-            background: none;
-            border: none;
-            color: #f0b800;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        .chat-messages {
-            height: 250px;
-            overflow-y: auto;
-            padding: 1rem;
-            background-color: #f9f9f9;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .message {
-            padding: 0.6rem 1rem;
-            border-radius: 18px;
-            max-width: 80%;
-        }
-        .message.user {
-            background-color: #f0b800;
-            color: #1a2b3c;
-            align-self: flex-end;
-        }
-        .message.bot {
-            background-color: #e0e0e0;
-            color: #333;
-            align-self: flex-start;
-        }
-        .chat-input-area {
-            display: flex;
-            padding: 1rem;
-            background-color: white;
-            border-top: 1px solid #ddd;
-        }
-        .chat-input-area input {
-            flex: 1;
-            border-radius: 40px;
-            border: 1px solid #ccc;
-            padding: 0.7rem 1rem;
-        }
-        .chat-input-area button {
-            background-color: #f0b800;
-            border: none;
-            border-radius: 40px;
-            width: 45px;
-            height: 45px;
-            margin-left: 0.5rem;
-            color: #1a2b3c;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .chat-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #f0b800;
-            color: #1a2b3c;
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -349,24 +261,13 @@
             justify-content: center;
             font-size: 2rem;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(240, 184, 0, 0.4);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
             z-index: 999;
             border: none;
+            text-decoration: none;
         }
-        .status-message {
-            padding: 0.8rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .whatsapp-toggle:hover {
+            background-color: #20BA5C;
         }
         @media (max-width: 800px) {
             .navbar { flex-direction: column; gap: 1rem; }
@@ -395,48 +296,30 @@
         <p style="margin-top:0.5rem;">(51) 3592-1234 · projetos@anacletoesquadrias.com.br</p>
     </footer>
 
-    <div class="chat-toggle" id="chatToggle"><i class="fas fa-comment-dots"></i></div>
-    <div class="chat-widget" id="chatWidget">
-        <div class="chat-header">
-            <span><i class="fas fa-robot" style="margin-right: 8px;"></i> Assistente Anacleto</span>
-            <button id="closeChat"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="message bot">Olá! Sou o assistente virtual da Anacleto. Posso ajudar com orçamentos, visitas ou projetos.</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" placeholder="Digite sua mensagem...">
-            <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
+    <!-- Botão WhatsApp (substitui o chat antigo) -->
+    <a href="https://wa.me/5551999991234" class="whatsapp-toggle" target="_blank" title="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <script>
-        // Configuración de la URL base de la API (la de Railway, la cambiaremos después)
-        const API_BASE = 'mysql-production-72cf.up.railway.app/api'; // REEMPLAZAR DESPUÉS
+        // ========== DADOS ESTÁTICOS (projetos) ==========
+        const projetos = [
+            { titulo: 'Edifício Corporate Tower', local: 'Centro Histórico - Porto Alegre', descricao: 'Fachada envidraçada para edifício corporativo de 18 andares.', imagem: '/imagen/corporate.jpg' },
+            { titulo: 'Shopping Total Canoas', local: 'Canoas - RS', descricao: 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', imagem: '/imagen/shopping.jpg' },
+            { titulo: 'Hospital Municipal NH', local: 'Novo Hamburgo - Vale do Sinos', descricao: 'Sistemas de divisórias e fachadas para áreas médicas.', imagem: '/imagen/hospital.jpg' },
+            { titulo: 'Residencial Alphaville', local: 'Porto Alegre - RS', descricao: 'Esquadrias de alumínio para condomínio de alto padrão.', imagem: '/imagen/alphaville.jpg' }
+        ];
 
-        // Elementos DOM
+        // ========== ELEMENTOS ==========
         const pageContent = document.getElementById('page-content');
         const navLinks = document.querySelectorAll('.nav-page');
 
-        // Función para cargar proyectos desde el backend
-        async function loadProjects() {
-            try {
-                const response = await fetch(`${API_BASE}/projects`);
-                if (!response.ok) throw new Error('Error al cargar proyectos');
-                const projects = await response.json();
-                return projects;
-            } catch (error) {
-                console.error(error);
-                return [];
-            }
-        }
-
-        // Renderizado de páginas
-        async function loadPage(page) {
+        // ========== FUNÇÃO DE RENDERIZAÇÃO ==========
+        function loadPage(page) {
             let html = '';
+
             if (page === 'home') {
-                const projects = await loadProjects();
-                const projetosDestaque = projects.slice(0, 4);
+                const destaques = projetos.slice(0, 4);
                 html = `
                     <div class="hero">
                         <h1>Soluções Inovadoras em Vidro e Alumínio para o RS</h1>
@@ -467,12 +350,12 @@
                         <div class="depto-item"><i class="fas fa-toolbox"></i><h3>Instalação</h3><p>Montagem profissional em toda a Região Metropolitana.</p></div>
                     </div>
                     <h2>Alguns dos Nossos Trabalhos</h2>
-                    <div class="card-grid" id="projetos-grid">
-                        ${projetosDestaque.map(p => `
+                    <div class="card-grid">
+                        ${destaques.map(p => `
                             <div class="card">
-                                <div class="card-img" style="background-image: url('${p.imagem || '/imagen/placeholder.jpg'}');"></div>
+                                <div class="card-img" style="background-image: url('${p.imagem}');"></div>
                                 <div class="card-content">
-                                    <div class="card-sub">${p.local || ''}</div>
+                                    <div class="card-sub">${p.local}</div>
                                     <div class="card-title">${p.titulo}</div>
                                     <p>${p.descricao}</p>
                                 </div>
@@ -483,14 +366,14 @@
                     <div class="contato-grid">
                         <div>
                             <p style="margin-bottom:2rem;">Preencha o formulário e nossa equipe em São Leopoldo entrará em contato. Atendemos toda a Região Metropolitana de Porto Alegre.</p>
-                            <form id="contactForm">
-                                <div class="form-group"><input type="text" id="contactNome" placeholder="Seu nome" required></div>
-                                <div class="form-group"><input type="email" id="contactEmail" placeholder="Seu e-mail" required></div>
-                                <div class="form-group"><input type="tel" id="contactTel" placeholder="Telefone"></div>
-                                <div class="form-group"><textarea id="contactMsg" rows="4" placeholder="Sua mensagem" required></textarea></div>
+                            <!-- FORMULÁRIO FORMSPREE (substitua 'SEU_ENDPOINT' pelo seu) -->
+                            <form action="https://formspree.io/f/SEU_ENDPOINT_AQUI" method="POST">
+                                <div class="form-group"><input type="text" name="nome" placeholder="Seu nome" required></div>
+                                <div class="form-group"><input type="email" name="email" placeholder="Seu e-mail" required></div>
+                                <div class="form-group"><input type="tel" name="telefone" placeholder="Telefone"></div>
+                                <div class="form-group"><textarea name="mensagem" rows="4" placeholder="Sua mensagem" required></textarea></div>
                                 <button type="submit" class="btn-primary">Enviar mensagem</button>
                             </form>
-                            <div id="contactStatus"></div>
                         </div>
                         <div class="info-contato">
                             <h3>Informações de Contato</h3>
@@ -501,155 +384,62 @@
                         </div>
                     </div>
                 `;
-                setTimeout(() => {
-                    document.getElementById('contactForm')?.addEventListener('submit', handleContactSubmit);
-                }, 100);
-            } else if (page === 'portfolio') {
-                const projects = await loadProjects();
-                html = `<h2>Projetos Realizados</h2><div class="card-grid">${projects.map(p => `
-                    <div class="card">
-                        <div class="card-img" style="background-image: url('${p.imagem || '/imagen/placeholder.jpg'}');"></div>
-                        <div class="card-content">
-                            <div class="card-sub">${p.local || ''}</div>
-                            <div class="card-title">${p.titulo}</div>
-                            <p>${p.descricao}</p>
-                        </div>
+            } 
+            else if (page === 'portfolio') {
+                html = `
+                    <h2>Projetos Realizados</h2>
+                    <div class="card-grid">
+                        ${projetos.map(p => `
+                            <div class="card">
+                                <div class="card-img" style="background-image: url('${p.imagem}');"></div>
+                                <div class="card-content">
+                                    <div class="card-sub">${p.local}</div>
+                                    <div class="card-title">${p.titulo}</div>
+                                    <p>${p.descricao}</p>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
-                `).join('')}</div>`;
-            } else if (page === 'schedule') {
+                `;
+            }
+            else if (page === 'schedule') {
                 html = `
                     <h2>Agendar Visita Técnica</h2>
                     <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
-                        <form id="scheduleForm">
-                            <div class="form-group"><label>Nome</label><input type="text" id="scheduleNome" required></div>
-                            <div class="form-group"><label>E-mail</label><input type="email" id="scheduleEmail" required></div>
-                            <div class="form-group"><label>Telefone</label><input type="tel" id="scheduleTel"></div>
-                            <div class="form-group"><label>Data preferencial</label><input type="date" id="scheduleData" required></div>
-                            <div class="form-group"><label>Horário</label><select id="scheduleHorario"><option>Manhã (8h-12h)</option><option>Tarde (13h-18h)</option></select></div>
-                            <div class="form-group"><label>Tipo de serviço</label><select id="scheduleTipo"><option>Orçamento para obra nova</option><option>Reparação / Manutenção</option><option>Asesoramento para projeto</option><option>Medição técnica</option></select></div>
-                            <div class="form-group"><label>Comentários</label><textarea id="scheduleComentarios" rows="3"></textarea></div>
-                            <button type="submit" class="btn-primary">Agendar</button>
-                        </form>
-                        <div id="scheduleStatus"></div>
+                        <p>Para agendar uma visita técnica, entre em contato conosco via WhatsApp ou telefone.</p>
+                        <p style="margin: 2rem 0;">
+                            <a href="https://wa.me/5551999991234" class="btn-primary" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                            <a href="tel:5135921234" class="btn-primary" style="margin-left:1rem;"><i class="fas fa-phone"></i> (51) 3592-1234</a>
+                        </p>
+                        <p>Ou envie um e-mail para <strong>projetos@anacletoesquadrias.com.br</strong> com sua solicitação.</p>
                     </div>
                 `;
-                setTimeout(() => {
-                    document.getElementById('scheduleForm')?.addEventListener('submit', handleScheduleSubmit);
-                }, 100);
-            } else if (page === 'budget') {
-                html = `
-                    <h2>Orçamento com IA</h2>
-                    <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
-                        <form id="budgetForm">
-                            <div class="form-group"><label>Seu nome</label><input type="text" id="budgetNome" required></div>
-                            <div class="form-group"><label>Seu e-mail</label><input type="email" id="budgetEmail" required></div>
-                            <div class="form-group"><label>Tipo de esquadria</label><select id="budgetTipo"><option>Janela</option><option>Porta</option><option>Fachada</option><option>Divisória</option></select></div>
-                            <div class="form-group"><label>Dimensões (L x A em metros)</label><input type="text" id="budgetDimensoes" placeholder="Ex: 2.5 x 1.8"></div>
-                            <div class="form-group"><label>Material</label><select id="budgetMaterial"><option>Alumínio branco</option><option>Alumínio anodizado</option><option>Vidro laminado</option></select></div>
-                            <div class="form-group"><label>Detalhes adicionais</label><textarea id="budgetDetalhes" rows="4"></textarea></div>
-                            <button type="submit" class="btn-primary">Gerar orçamento com IA</button>
-                        </form>
-                        <div id="budgetStatus"></div>
-                    </div>
-                `;
-                setTimeout(() => {
-                    document.getElementById('budgetForm')?.addEventListener('submit', handleBudgetSubmit);
-                }, 100);
             }
+            else if (page === 'budget') {
+                html = `
+                    <h2>Solicitar Orçamento</h2>
+                    <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
+                        <p>Preencha o formulário abaixo com os detalhes do seu projeto. Nossa equipe retornará com um orçamento personalizado.</p>
+                        <!-- FORMULÁRIO FORMSPREE para orçamento (pode usar o mesmo endpoint) -->
+                        <form action="https://formspree.io/f/SEU_ENDPOINT_AQUI" method="POST">
+                            <input type="hidden" name="_subject" value="Solicitação de Orçamento">
+                            <div class="form-group"><input type="text" name="nome" placeholder="Seu nome" required></div>
+                            <div class="form-group"><input type="email" name="email" placeholder="Seu e-mail" required></div>
+                            <div class="form-group"><input type="tel" name="telefone" placeholder="Telefone"></div>
+                            <div class="form-group"><input type="text" name="tipo" placeholder="Tipo de esquadria (ex: Janela, Porta, Fachada)"></div>
+                            <div class="form-group"><input type="text" name="dimensoes" placeholder="Dimensões (L x A em metros)"></div>
+                            <div class="form-group"><input type="text" name="material" placeholder="Material desejado"></div>
+                            <div class="form-group"><textarea name="detalhes" rows="4" placeholder="Detalhes adicionais"></textarea></div>
+                            <button type="submit" class="btn-primary">Enviar solicitação</button>
+                        </form>
+                    </div>
+                `;
+            }
+
             pageContent.innerHTML = html;
         }
 
-        // Manejadores de formularios
-        async function handleContactSubmit(e) {
-            e.preventDefault();
-            const data = {
-                nome: document.getElementById('contactNome').value,
-                email: document.getElementById('contactEmail').value,
-                telefone: document.getElementById('contactTel').value,
-                mensagem: document.getElementById('contactMsg').value
-            };
-            const statusDiv = document.getElementById('contactStatus');
-            statusDiv.innerHTML = '<p>Enviando...</p>';
-            try {
-                const res = await fetch(`${API_BASE}/contact`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                if (result.success) {
-                    statusDiv.innerHTML = '<div class="status-message status-success">Mensagem enviada com sucesso!</div>';
-                    document.getElementById('contactForm').reset();
-                } else {
-                    statusDiv.innerHTML = `<div class="status-message status-error">Erro: ${result.message}</div>`;
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '<div class="status-message status-error">Erro de conexão.</div>';
-            }
-        }
-
-        async function handleScheduleSubmit(e) {
-            e.preventDefault();
-            const data = {
-                nome: document.getElementById('scheduleNome').value,
-                email: document.getElementById('scheduleEmail').value,
-                telefone: document.getElementById('scheduleTel').value,
-                data: document.getElementById('scheduleData').value,
-                horario: document.getElementById('scheduleHorario').value,
-                tipo_servico: document.getElementById('scheduleTipo').value,
-                comentarios: document.getElementById('scheduleComentarios').value
-            };
-            const statusDiv = document.getElementById('scheduleStatus');
-            statusDiv.innerHTML = '<p>Agendando...</p>';
-            try {
-                const res = await fetch(`${API_BASE}/schedule`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                if (result.success) {
-                    statusDiv.innerHTML = '<div class="status-message status-success">Visita agendada! Verifique seu e-mail.</div>';
-                    document.getElementById('scheduleForm').reset();
-                } else {
-                    statusDiv.innerHTML = `<div class="status-message status-error">Erro: ${result.message}</div>`;
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '<div class="status-message status-error">Erro de conexão.</div>';
-            }
-        }
-
-        async function handleBudgetSubmit(e) {
-            e.preventDefault();
-            const data = {
-                nome: document.getElementById('budgetNome').value,
-                email: document.getElementById('budgetEmail').value,
-                tipo: document.getElementById('budgetTipo').value,
-                dimensoes: document.getElementById('budgetDimensoes').value,
-                material: document.getElementById('budgetMaterial').value,
-                detalhes: document.getElementById('budgetDetalhes').value
-            };
-            const statusDiv = document.getElementById('budgetStatus');
-            statusDiv.innerHTML = '<p>Gerando orçamento com IA...</p>';
-            try {
-                const res = await fetch(`${API_BASE}/budget`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                if (result.success) {
-                    statusDiv.innerHTML = '<div class="status-message status-success">Orçamento gerado! Verifique seu e-mail.</div>';
-                    document.getElementById('budgetForm').reset();
-                } else {
-                    statusDiv.innerHTML = `<div class="status-message status-error">Erro: ${result.message}</div>`;
-                }
-            } catch (error) {
-                statusDiv.innerHTML = '<div class="status-message status-error">Erro de conexão.</div>';
-            }
-        }
-
-        // Navegación
+        // ========== NAVEGAÇÃO ==========
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -660,48 +450,8 @@
             });
         });
 
-        // Cargar página inicial
+        // Carregar página inicial
         loadPage('home');
-
-        // Chat flotante
-        const chatToggle = document.getElementById('chatToggle');
-        const chatWidget = document.getElementById('chatWidget');
-        const closeChat = document.getElementById('closeChat');
-        const sendChat = document.getElementById('sendChat');
-        const chatInput = document.getElementById('chatInput');
-        const chatMessages = document.getElementById('chatMessages');
-
-        chatToggle.addEventListener('click', () => chatWidget.classList.toggle('open'));
-        closeChat.addEventListener('click', () => chatWidget.classList.remove('open'));
-
-        function addMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            msgDiv.textContent = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        sendChat.addEventListener('click', async () => {
-            const msg = chatInput.value.trim();
-            if (!msg) return;
-            addMessage(msg, 'user');
-            chatInput.value = '';
-
-            try {
-                const res = await fetch(`${API_BASE}/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg })
-                });
-                const data = await res.json();
-                addMessage(data.resposta || 'Desculpe, não entendi.', 'bot');
-            } catch (error) {
-                addMessage('Erro de conexão com o assistente.', 'bot');
-            }
-        });
-
-        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat.click(); });
     </script>
 </body>
 </html>
