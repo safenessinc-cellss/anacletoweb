@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
-const mysql = require('mysql2/promise'); // Usamos la versión promise
+const mysql = require('mysql2/promise');
 
 dotenv.config();
 
@@ -14,54 +14,46 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos (imágenes y frontend)
+// Servir archivos estáticos (imágenes)
 app.use('/imagen', express.static(path.join(__dirname, '../imagen')));
-// Si quieres servir el frontend también (opcional)
-app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Configuración de la conexión a MySQL usando variables de entorno de Railway
-const dbConfig = {
-  host: process.env.MYSQLHOST || process.env.MYSQL_HOST,
-  user: process.env.MYSQLUSER || process.env.MYSQL_USER,
-  password: process.env.MYSQLPASSWORD || process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE,
-  port: process.env.MYSQLPORT || process.env.MYSQL_PORT || 3306,
+// Crear pool de conexiones a MySQL usando variables de entorno de Railway
+const db = mysql.createPool({
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
-};
+});
 
-// Crear el pool de conexiones
-let pool;
-try {
-  pool = mysql.createPool(dbConfig);
-  console.log('✅ Pool de MySQL creado');
-} catch (error) {
-  console.error('❌ Error al crear pool de MySQL:', error);
-  process.exit(1);
-}
-
-// Función para probar la conexión y crear tablas
-async function initializeDatabase() {
+// Probar conexión
+(async () => {
   try {
-    // Probar conexión
-    const connection = await pool.getConnection();
+    const connection = await db.getConnection();
     console.log('✅ Conectado a MySQL en Railway');
+    connection.release();
+  } catch (error) {
+    console.error('❌ Error conectando a MySQL:', error.message);
+  }
+})();
 
-    // Crear tablas si no existen
-    await connection.query(`
+// Función para crear tablas si no existen
+async function createTables() {
+  try {
+    await db.query(`
       CREATE TABLE IF NOT EXISTS projetos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         titulo VARCHAR(255) NOT NULL,
         local VARCHAR(255),
         descricao TEXT,
-        imagem VARCHAR(500),
+        imagem VARCHAR(255),
         categoria VARCHAR(100)
       );
     `);
-    console.log('✅ Tabla "projetos" verificada');
-
-    await connection.query(`
+    await db.query(`
       CREATE TABLE IF NOT EXISTS visitas (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(255) NOT NULL,
@@ -69,13 +61,11 @@ async function initializeDatabase() {
         telefone VARCHAR(50),
         data VARCHAR(50) NOT NULL,
         horario VARCHAR(50) NOT NULL,
-        tipo_servico VARCHAR(255),
+        tipo_servico VARCHAR(100),
         criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Tabla "visitas" verificada');
-
-    await connection.query(`
+    await db.query(`
       CREATE TABLE IF NOT EXISTS orcamentos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         nome VARCHAR(255),
@@ -88,9 +78,7 @@ async function initializeDatabase() {
         enviado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Tabla "orcamentos" verificada');
-
-    await connection.query(`
+    await db.query(`
       CREATE TABLE IF NOT EXISTS chats (
         id INT AUTO_INCREMENT PRIMARY KEY,
         mensagem_usuario TEXT,
@@ -98,48 +86,50 @@ async function initializeDatabase() {
         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Tabla "chats" verificada');
-
-    // Verificar si hay proyectos, si no, insertar algunos de ejemplo
-    const [rows] = await connection.query('SELECT COUNT(*) as count FROM projetos');
-    if (rows[0].count === 0) {
-      await connection.query(
-        'INSERT INTO projetos (titulo, local, descricao, imagem, categoria) VALUES ?',
-        [[
-          ['Edifício Corporate Tower', 'Centro Histórico - Porto Alegre', 'Fachada envidraçada para edifício corporativo de 18 andares.', '/imagem/corporate.jpg', 'comercial'],
-          ['Shopping Total Canoas', 'Canoas - RS', 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', '/imagem/shopping.jpg', 'comercial'],
-          ['Hospital Municipal NH', 'Novo Hamburgo - Vale do Sinos', 'Sistemas de divisórias e fachadas para áreas médicas.', '/imagem/hospital.jpg', 'comercial'],
-          ['Residencial Alphaville', 'Porto Alegre - RS', 'Esquadrias de alumínio para condomínio de alto padrão.', '/imagem/alphaville.jpg', 'residencial']
-        ]]
-      );
-      console.log('✅ Proyectos de ejemplo insertados');
-    }
-
-    connection.release();
+    console.log('✅ Tablas verificadas/creadas en MySQL');
   } catch (error) {
-    console.error('❌ Error al inicializar la base de datos:', error);
-    process.exit(1);
+    console.error('❌ Error creando tablas:', error.message);
   }
 }
+createTables();
 
-// Llamar a la inicialización
-initializeDatabase();
+// Insertar algunos proyectos de ejemplo (si la tabla está vacía)
+(async () => {
+  try {
+    const [rows] = await db.query('SELECT COUNT(*) as count FROM projetos');
+    if (rows[0].count === 0) {
+      await db.query(
+        'INSERT INTO projetos (titulo, local, descricao, imagem, categoria) VALUES ?',
+        [[
+          ['Edifício Corporate Tower', 'Centro Histórico - Porto Alegre', 'Fachada envidraçada para edifício corporativo de 18 andares.', '/imagen/corporate.jpg', 'comercial'],
+          ['Shopping Total Canoas', 'Canoas - RS', 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', '/imagen/shopping.jpg', 'comercial'],
+          ['Hospital Municipal NH', 'Novo Hamburgo - Vale do Sinos', 'Sistemas de divisórias e fachadas para áreas médicas.', '/imagen/hospital.jpg', 'comercial'],
+          ['Residencial Alphaville', 'Porto Alegre - RS', 'Esquadrias de alumínio para condomínio de alto padrão.', '/imagen/alphaville.jpg', 'residencial']
+        ]]
+      );
+      console.log('✅ Proyectos de ejemplo insertados.');
+    }
+  } catch (error) {
+    console.error('Error al insertar proyectos:', error);
+  }
+})();
 
-// Hacer que el pool esté disponible para las rutas (lo pasaremos con un middleware)
-app.use((req, res, next) => {
-  req.db = pool;
-  next();
-});
+// Importar rutas
+const contactRouter = require('./routes/contact')(db);
+const scheduleRouter = require('./routes/schedule')(db);
+const budgetRouter = require('./routes/budget')(db);
+const chatRouter = require('./routes/chat')(db);
+const projectsRouter = require('./routes/projects')(db);
+const uploadRouter = require('./routes/upload');
 
-// Importar rutas (ajusta las rutas según tus archivos)
-app.use('/api/contact', require('./routes/contact'));
-app.use('/api/schedule', require('./routes/schedule'));
-app.use('/api/budget', require('./routes/budget'));
-app.use('/api/chat', require('./routes/chat'));
-app.use('/api/upload', require('./routes/upload'));
-app.use('/api/projects', require('./routes/projects'));
+app.use('/api/contact', contactRouter);
+app.use('/api/schedule', scheduleRouter);
+app.use('/api/budget', budgetRouter);
+app.use('/api/chat', chatRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/upload', uploadRouter);
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
