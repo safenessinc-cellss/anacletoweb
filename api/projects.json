@@ -1,0 +1,26 @@
+[
+  {
+    "titulo": "Edifício Corporate Tower",
+    "local": "Centro Histórico - Porto Alegre",
+    "descricao": "Fachada envidraçada para edifício corporativo de 18 andares.",
+    "imagem": "/images/corporate.jpg"
+  },
+  {
+    "titulo": "Shopping Total Canoas",
+    "local": "Canoas - RS",
+    "descricao": "Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.",
+    "imagem": "/images/shopping.jpg"
+  },
+  {
+    "titulo": "Hospital Municipal NH",
+    "local": "Novo Hamburgo - Vale do Sinos",
+    "descricao": "Sistemas de divisórias e fachadas para áreas médicas.",
+    "imagem": "/images/hospital.jpg"
+  },
+  {
+    "titulo": "Residencial Alphaville",
+    "local": "Porto Alegre - RS",
+    "descricao": "Esquadrias de alumínio para condomínio de alto padrão.",
+    "imagem": "/images/alphaville.jpg"
+  }
+]
