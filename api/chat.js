@@ -1,6 +1,6 @@
 const cohere = require('cohere-ai');
 
-// Inicializa Cohere con tu API key (debes configurarla como variable de entorno en Vercel)
+// Inicializa Cohere con la API key de las variables de entorno
 cohere.init(process.env.COHERE_API_KEY);
 
 module.exports = async (req, res) => {
@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
 
   try {
     const response = await cohere.generate({
-      model: 'command-xlarge-nightly', // modelo gratuito
+      model: 'command',
       prompt: `Você é um assistente virtual da empresa Anacleto Esquadrias, especializada em soluções de vidro e alumínio no Rio Grande do Sul. Responda de forma amigável e profissional a seguinte pergunta: ${message}`,
       max_tokens: 200,
       temperature: 0.7,
