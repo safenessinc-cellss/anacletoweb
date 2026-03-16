@@ -4,5 +4,7 @@
   "scripts": {
     "dev": "vercel dev"
   },
-  "dependencies": {}
+  "dependencies": {
+    "cohere-ai": "^7.0.0"
+  }
 }
