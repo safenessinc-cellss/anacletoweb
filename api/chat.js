@@ -1,7 +1,7 @@
 const cohere = require('cohere-ai');
 
 // Inicializa Cohere con la API key de las variables de entorno
-cohere.init(process.env..COHERE_API_KEY);
+cohere.init(process.env.COHERE_API_KEY);
 
 module.exports = async (req, res) => {
   // Configurar CORS
