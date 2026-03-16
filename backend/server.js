@@ -7,7 +7,8 @@ const mysql = require('mysql2/promise');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Servidor en puerto ${port}`));
 
 // Middlewares
 app.use(cors());
