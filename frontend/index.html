@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* ========== ESTILOS IGUAIS AOS SEUS ========== */
+        /* ========== ESTILOS (mantidos os originais) ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -246,10 +246,10 @@
             border-color: #f0b800;
             outline: none;
         }
-        /* Estilos do chat */
+        /* Estilos do widget de chat */
         .chat-widget {
             position: fixed;
-            bottom: 30px;
+            bottom: 90px;
             right: 30px;
             width: 350px;
             background-color: white;
@@ -334,7 +334,7 @@
         }
         .chat-toggle {
             position: fixed;
-            bottom: 100px;
+            bottom: 30px;
             right: 30px;
             background-color: #f0b800;
             color: #1a2b3c;
@@ -349,28 +349,6 @@
             box-shadow: 0 5px 15px rgba(240, 184, 0, 0.4);
             z-index: 999;
             border: none;
-        }
-        .whatsapp-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #25D366;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-            z-index: 999;
-            border: none;
-            text-decoration: none;
-        }
-        .whatsapp-toggle:hover {
-            background-color: #20BA5C;
         }
         @media (max-width: 800px) {
             .navbar { flex-direction: column; gap: 1rem; }
@@ -399,11 +377,15 @@
         <p style="margin-top:0.5rem;">(51) 3592-1234 · projetos@anacletoesquadrias.com.br</p>
     </footer>
 
-    <!-- Botão do chat com IA -->
-    <div class="chat-toggle" id="chatToggle"><i class="fas fa-comment-dots"></i></div>
+    <!-- Botão para abrir o chat -->
+    <div class="chat-toggle" id="chatToggle">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+
+    <!-- Widget de chat -->
     <div class="chat-widget" id="chatWidget">
         <div class="chat-header">
-            <span><i class="fas fa-robot" style="margin-right: 8px;"></i> Assistente Anacleto</span>
+            <span><i class="fas fa-robot"></i> Assistente Anacleto</span>
             <button id="closeChat"><i class="fas fa-times"></i></button>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -415,44 +397,74 @@
         </div>
     </div>
 
-    <!-- Botão WhatsApp (opcional, pode manter) -->
-    <a href="https://wa.me/5551999991234" class="whatsapp-toggle" target="_blank" title="Fale conosco no WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
     <script>
-        // ========== CONFIGURAÇÃO ==========
-        // Substitua pelo seu endpoint do Formspree
-        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/SEU_ENDPOINT_AQUI';
+        // ========== DADOS ESTÁTICOS (projetos) ==========
+        const projetos = [
+            { titulo: 'Edifício Corporate Tower', local: 'Centro Histórico - Porto Alegre', descricao: 'Fachada envidraçada para edifício corporativo de 18 andares.', imagem: '/images/corporate.jpg' },
+            { titulo: 'Shopping Total Canoas', local: 'Canoas - RS', descricao: 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', imagem: '/images/shopping.jpg' },
+            { titulo: 'Hospital Municipal NH', local: 'Novo Hamburgo - Vale do Sinos', descricao: 'Sistemas de divisórias e fachadas para áreas médicas.', imagem: '/images/hospital.jpg' },
+            { titulo: 'Residencial Alphaville', local: 'Porto Alegre - RS', descricao: 'Esquadrias de alumínio para condomínio de alto padrão.', imagem: '/images/alphaville.jpg' }
+        ];
 
         // ========== ELEMENTOS ==========
         const pageContent = document.getElementById('page-content');
         const navLinks = document.querySelectorAll('.nav-page');
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWidget = document.getElementById('chatWidget');
+        const closeChat = document.getElementById('closeChat');
+        const sendChat = document.getElementById('sendChat');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
 
-        // ========== CARREGAR PROJETOS DA API ==========
-        async function loadProjects() {
-            try {
-                const res = await fetch('/api/projects');
-                if (!res.ok) throw new Error('Erro ao carregar projetos');
-                return await res.json();
-            } catch (error) {
-                console.error(error);
-                // Fallback: dados estáticos (caso a API falhe)
-                return [
-                    { titulo: 'Edifício Corporate Tower', local: 'Centro Histórico - Porto Alegre', descricao: 'Fachada envidraçada para edifício corporativo de 18 andares.', imagem: '/images/corporate.jpg' },
-                    { titulo: 'Shopping Total Canoas', local: 'Canoas - RS', descricao: 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', imagem: '/images/shopping.jpg' },
-                    { titulo: 'Hospital Municipal NH', local: 'Novo Hamburgo - Vale do Sinos', descricao: 'Sistemas de divisórias e fachadas para áreas médicas.', imagem: '/images/hospital.jpg' },
-                    { titulo: 'Residencial Alphaville', local: 'Porto Alegre - RS', descricao: 'Esquadrias de alumínio para condomínio de alto padrão.', imagem: '/images/alphaville.jpg' }
-                ];
-            }
+        // ========== FUNÇÕES DO CHAT ==========
+        chatToggle.addEventListener('click', () => {
+            chatWidget.classList.toggle('open');
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatWidget.classList.remove('open');
+        });
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.textContent = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        // ========== RENDERIZAÇÃO ==========
-        async function loadPage(page) {
+        sendChat.addEventListener('click', async () => {
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+            addMessage(msg, 'user');
+            chatInput.value = '';
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const data = await res.json();
+                if (data.resposta) {
+                    addMessage(data.resposta, 'bot');
+                } else {
+                    addMessage('Desculpe, não entendi.', 'bot');
+                }
+            } catch (error) {
+                addMessage('Erro de conexão com o assistente.', 'bot');
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChat.click();
+        });
+
+        // ========== RENDERIZAÇÃO DAS PÁGINAS ==========
+        function loadPage(page) {
             let html = '';
 
             if (page === 'home') {
-                const projetos = await loadProjects();
                 const destaques = projetos.slice(0, 4);
                 html = `
                     <div class="hero">
@@ -500,7 +512,7 @@
                     <div class="contato-grid">
                         <div>
                             <p style="margin-bottom:2rem;">Preencha o formulário e nossa equipe em São Leopoldo entrará em contato. Atendemos toda a Região Metropolitana de Porto Alegre.</p>
-                            <form action="${FORMSPREE_ENDPOINT}" method="POST">
+                            <form action="https://formspree.io/f/SEU_ENDPOINT_AQUI" method="POST">
                                 <div class="form-group"><input type="text" name="nome" placeholder="Seu nome" required></div>
                                 <div class="form-group"><input type="email" name="email" placeholder="Seu e-mail" required></div>
                                 <div class="form-group"><input type="tel" name="telefone" placeholder="Telefone"></div>
@@ -519,7 +531,6 @@
                 `;
             } 
             else if (page === 'portfolio') {
-                const projetos = await loadProjects();
                 html = `
                     <h2>Projetos Realizados</h2>
                     <div class="card-grid">
@@ -554,7 +565,7 @@
                     <h2>Solicitar Orçamento</h2>
                     <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
                         <p>Preencha o formulário abaixo com os detalhes do seu projeto. Nossa equipe retornará com um orçamento personalizado.</p>
-                        <form action="${FORMSPREE_ENDPOINT}" method="POST">
+                        <form action="https://formspree.io/f/SEU_ENDPOINT_AQUI" method="POST">
                             <input type="hidden" name="_subject" value="Solicitação de Orçamento">
                             <div class="form-group"><input type="text" name="nome" placeholder="Seu nome" required></div>
                             <div class="form-group"><input type="email" name="email" placeholder="Seu e-mail" required></div>
@@ -583,47 +594,7 @@
             });
         });
 
-        // ========== CHAT COM IA ==========
-        const chatToggle = document.getElementById('chatToggle');
-        const chatWidget = document.getElementById('chatWidget');
-        const closeChat = document.getElementById('closeChat');
-        const sendChat = document.getElementById('sendChat');
-        const chatInput = document.getElementById('chatInput');
-        const chatMessages = document.getElementById('chatMessages');
-
-        chatToggle.addEventListener('click', () => chatWidget.classList.toggle('open'));
-        closeChat.addEventListener('click', () => chatWidget.classList.remove('open'));
-
-        function addMessage(text, sender) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            msgDiv.textContent = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        sendChat.addEventListener('click', async () => {
-            const msg = chatInput.value.trim();
-            if (!msg) return;
-            addMessage(msg, 'user');
-            chatInput.value = '';
-
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg })
-                });
-                const data = await res.json();
-                addMessage(data.resposta || 'Desculpe, não entendi.', 'bot');
-            } catch (error) {
-                addMessage('Erro de conexão com o assistente.', 'bot');
-            }
-        });
-
-        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat.click(); });
-
-        // ========== INICIALIZAÇÃO ==========
+        // Carregar página inicial
         loadPage('home');
     </script>
 </body>
