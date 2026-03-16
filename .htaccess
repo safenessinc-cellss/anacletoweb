@@ -1,0 +1,19 @@
+RewriteEngine On
+
+# 1. Redireccionar HTTP a HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# 2. Redirecciones personalizadas (EJEMPLO - ajusta según necesites)
+# Redirect 301 /pagina-antigua.html https://anacletoesquadrias.com.br/pagina-nueva.html
+# Redirect 301 /otra-pagina.html https://anacletoesquadrias.com.br/nueva-pagina.html
+
+# 3. Encabezados de seguridad
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
+
+# 4. Páginas de error personalizadas (opcional - crea estas páginas primero)
+# ErrorDocument 403 /errors/403.html
+# ErrorDocument 404 /errors/404.html
+# ErrorDocument 500 /errors/500.html
