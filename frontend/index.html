@@ -246,7 +246,110 @@
             border-color: #f0b800;
             outline: none;
         }
-        /* Estilos do botão WhatsApp */
+        /* Estilos do chat */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 350px;
+            background-color: white;
+            border: 2px solid #f0b800;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s, opacity 0.3s;
+            transform: scale(0);
+            opacity: 0;
+            transform-origin: bottom right;
+        }
+        .chat-widget.open {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .chat-header {
+            background-color: #1a2b3c;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+        }
+        .chat-header button {
+            background: none;
+            border: none;
+            color: #f0b800;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .message {
+            padding: 0.6rem 1rem;
+            border-radius: 18px;
+            max-width: 80%;
+        }
+        .message.user {
+            background-color: #f0b800;
+            color: #1a2b3c;
+            align-self: flex-end;
+        }
+        .message.bot {
+            background-color: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 1rem;
+            background-color: white;
+            border-top: 1px solid #ddd;
+        }
+        .chat-input-area input {
+            flex: 1;
+            border-radius: 40px;
+            border: 1px solid #ccc;
+            padding: 0.7rem 1rem;
+        }
+        .chat-input-area button {
+            background-color: #f0b800;
+            border: none;
+            border-radius: 40px;
+            width: 45px;
+            height: 45px;
+            margin-left: 0.5rem;
+            color: #1a2b3c;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .chat-toggle {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background-color: #f0b800;
+            color: #1a2b3c;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(240, 184, 0, 0.4);
+            z-index: 999;
+            border: none;
+        }
         .whatsapp-toggle {
             position: fixed;
             bottom: 30px;
@@ -296,29 +399,60 @@
         <p style="margin-top:0.5rem;">(51) 3592-1234 · projetos@anacletoesquadrias.com.br</p>
     </footer>
 
-    <!-- Botão WhatsApp (substitui o chat antigo) -->
+    <!-- Botão do chat com IA -->
+    <div class="chat-toggle" id="chatToggle"><i class="fas fa-comment-dots"></i></div>
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <span><i class="fas fa-robot" style="margin-right: 8px;"></i> Assistente Anacleto</span>
+            <button id="closeChat"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">Olá! Sou o assistente virtual da Anacleto. Posso ajudar com orçamentos, visitas ou projetos.</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Digite sua mensagem...">
+            <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Botão WhatsApp (opcional, pode manter) -->
     <a href="https://wa.me/5551999991234" class="whatsapp-toggle" target="_blank" title="Fale conosco no WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 
     <script>
-        // ========== DADOS ESTÁTICOS (projetos) ==========
-        const projetos = [
-            { titulo: 'Edifício Corporate Tower', local: 'Centro Histórico - Porto Alegre', descricao: 'Fachada envidraçada para edifício corporativo de 18 andares.', imagem: '/imagen/corporate.jpg' },
-            { titulo: 'Shopping Total Canoas', local: 'Canoas - RS', descricao: 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', imagem: '/imagen/shopping.jpg' },
-            { titulo: 'Hospital Municipal NH', local: 'Novo Hamburgo - Vale do Sinos', descricao: 'Sistemas de divisórias e fachadas para áreas médicas.', imagem: '/imagen/hospital.jpg' },
-            { titulo: 'Residencial Alphaville', local: 'Porto Alegre - RS', descricao: 'Esquadrias de alumínio para condomínio de alto padrão.', imagem: '/imagen/alphaville.jpg' }
-        ];
+        // ========== CONFIGURAÇÃO ==========
+        // Substitua pelo seu endpoint do Formspree
+        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/SEU_ENDPOINT_AQUI';
 
         // ========== ELEMENTOS ==========
         const pageContent = document.getElementById('page-content');
         const navLinks = document.querySelectorAll('.nav-page');
 
-        // ========== FUNÇÃO DE RENDERIZAÇÃO ==========
-        function loadPage(page) {
+        // ========== CARREGAR PROJETOS DA API ==========
+        async function loadProjects() {
+            try {
+                const res = await fetch('/api/projects');
+                if (!res.ok) throw new Error('Erro ao carregar projetos');
+                return await res.json();
+            } catch (error) {
+                console.error(error);
+                // Fallback: dados estáticos (caso a API falhe)
+                return [
+                    { titulo: 'Edifício Corporate Tower', local: 'Centro Histórico - Porto Alegre', descricao: 'Fachada envidraçada para edifício corporativo de 18 andares.', imagem: '/images/corporate.jpg' },
+                    { titulo: 'Shopping Total Canoas', local: 'Canoas - RS', descricao: 'Cúpula e fachadas ventiladas com mais de 5.000 m² de vidro.', imagem: '/images/shopping.jpg' },
+                    { titulo: 'Hospital Municipal NH', local: 'Novo Hamburgo - Vale do Sinos', descricao: 'Sistemas de divisórias e fachadas para áreas médicas.', imagem: '/images/hospital.jpg' },
+                    { titulo: 'Residencial Alphaville', local: 'Porto Alegre - RS', descricao: 'Esquadrias de alumínio para condomínio de alto padrão.', imagem: '/images/alphaville.jpg' }
+                ];
+            }
+        }
+
+        // ========== RENDERIZAÇÃO ==========
+        async function loadPage(page) {
             let html = '';
 
             if (page === 'home') {
+                const projetos = await loadProjects();
                 const destaques = projetos.slice(0, 4);
                 html = `
                     <div class="hero">
@@ -330,15 +464,15 @@
                     <p style="margin-bottom:2rem;">Produtos inovadores que combinam design, eficiência energética e durabilidade para o clima do Rio Grande do Sul.</p>
                     <div class="card-grid">
                         <div class="card">
-                            <div class="card-img" style="background-image: url('/imagen/esquadria-residencial.jpg');"></div>
+                            <div class="card-img" style="background-image: url('/images/esquadria-residencial.jpg');"></div>
                             <div class="card-content"><h3>Esquadrias Residenciais</h3><p>Portas, janelas e fachadas para residências com conforto térmico e acústico.</p></div>
                         </div>
                         <div class="card">
-                            <div class="card-img" style="background-image: url('/imagen/fachada-corporativa.jpg');"></div>
+                            <div class="card-img" style="background-image: url('/images/fachada-corporativa.jpg');"></div>
                             <div class="card-content"><h3>Fachadas Corporativas</h3><p>Sistemas de alta eficiência energética para edifícios comerciais.</p></div>
                         </div>
                         <div class="card">
-                            <div class="card-img" style="background-image: url('/imagen/vidro-laminado.jpg');"></div>
+                            <div class="card-img" style="background-image: url('/images/vidro-laminado.jpg');"></div>
                             <div class="card-content"><h3>Vidro Laminado</h3><p>Proteção e segurança sem comprometer estética e transparência.</p></div>
                         </div>
                     </div>
@@ -366,8 +500,7 @@
                     <div class="contato-grid">
                         <div>
                             <p style="margin-bottom:2rem;">Preencha o formulário e nossa equipe em São Leopoldo entrará em contato. Atendemos toda a Região Metropolitana de Porto Alegre.</p>
-                            <!-- FORMULÁRIO FORMSPREE (substitua 'SEU_ENDPOINT' pelo seu) -->
-                            <form action="https://formspree.io/f/SEU_ENDPOINT_AQUI" method="POST">
+                            <form action="${FORMSPREE_ENDPOINT}" method="POST">
                                 <div class="form-group"><input type="text" name="nome" placeholder="Seu nome" required></div>
                                 <div class="form-group"><input type="email" name="email" placeholder="Seu e-mail" required></div>
                                 <div class="form-group"><input type="tel" name="telefone" placeholder="Telefone"></div>
@@ -386,6 +519,7 @@
                 `;
             } 
             else if (page === 'portfolio') {
+                const projetos = await loadProjects();
                 html = `
                     <h2>Projetos Realizados</h2>
                     <div class="card-grid">
@@ -420,8 +554,7 @@
                     <h2>Solicitar Orçamento</h2>
                     <div style="background:#f0f3f7; padding:2rem; border-radius:20px;">
                         <p>Preencha o formulário abaixo com os detalhes do seu projeto. Nossa equipe retornará com um orçamento personalizado.</p>
-                        <!-- FORMULÁRIO FORMSPREE para orçamento (pode usar o mesmo endpoint) -->
-                        <form action="https://formspree.io/f/SEU_ENDPOINT_AQUI" method="POST">
+                        <form action="${FORMSPREE_ENDPOINT}" method="POST">
                             <input type="hidden" name="_subject" value="Solicitação de Orçamento">
                             <div class="form-group"><input type="text" name="nome" placeholder="Seu nome" required></div>
                             <div class="form-group"><input type="email" name="email" placeholder="Seu e-mail" required></div>
@@ -450,7 +583,47 @@
             });
         });
 
-        // Carregar página inicial
+        // ========== CHAT COM IA ==========
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWidget = document.getElementById('chatWidget');
+        const closeChat = document.getElementById('closeChat');
+        const sendChat = document.getElementById('sendChat');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        chatToggle.addEventListener('click', () => chatWidget.classList.toggle('open'));
+        closeChat.addEventListener('click', () => chatWidget.classList.remove('open'));
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.textContent = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendChat.addEventListener('click', async () => {
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+            addMessage(msg, 'user');
+            chatInput.value = '';
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const data = await res.json();
+                addMessage(data.resposta || 'Desculpe, não entendi.', 'bot');
+            } catch (error) {
+                addMessage('Erro de conexão com o assistente.', 'bot');
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat.click(); });
+
+        // ========== INICIALIZAÇÃO ==========
         loadPage('home');
     </script>
 </body>
