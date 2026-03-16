@@ -1,79 +1,45 @@
-const mysql = require('mysql2/promise'); // Importamos mysql2 con soporte de promesas
+const express = require('express');
+const nodemailer = require('nodemailer');
 
-// Crear el pool de conexiones usando las variables de entorno de Railway
-const db = mysql.createPool({
-  host: process.env.MYSQLHOST,         // Ejemplo: containers-us-west-xxx.railway.app
-  user: process.env.MYSQLUSER,         // Normalmente "root"
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: process.env.MYSQLPORT,          // Normalmente 3306
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+module.exports = (db) => {
+  const router = express.Router();
 
-// Probar la conexión (opcional)
-(async () => {
-  try {
-    const connection = await db.getConnection();
-    console.log('✅ Conectado a MySQL en Railway');
-    connection.release();
-  } catch (error) {
-    console.error('❌ Error conectando a MySQL:', error.message);
-  }
-})();
+  router.post('/', async (req, res) => {
+    const { nome, email, telefone, data, horario, tipo_servico, comentarios } = req.body;
 
-// Función para crear las tablas si no existen
-async function createTables() {
-  try {
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS projetos (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        titulo VARCHAR(255) NOT NULL,
-        local VARCHAR(255),
-        descricao TEXT,
-        imagem VARCHAR(255),
-        categoria VARCHAR(100)
+    try {
+      // Guardar en MySQL
+      await db.query(
+        'INSERT INTO visitas (nome, email, telefone, data, horario, tipo_servico) VALUES (?, ?, ?, ?, ?, ?)',
+        [nome, email, telefone, data, horario, tipo_servico]
       );
-    `);
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS visitas (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nome VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        telefone VARCHAR(50),
-        data VARCHAR(50) NOT NULL,
-        horario VARCHAR(50) NOT NULL,
-        tipo_servico VARCHAR(100),
-        criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS orcamentos (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nome VARCHAR(255),
-        email VARCHAR(255),
-        tipo VARCHAR(100),
-        dimensoes VARCHAR(100),
-        material VARCHAR(100),
-        detalhes TEXT,
-        resposta_ia TEXT,
-        enviado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS chats (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        mensagem_usuario TEXT,
-        resposta_bot TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-    console.log('✅ Tablas verificadas/creadas en MySQL');
-  } catch (error) {
-    console.error('❌ Error creando tablas:', error.message);
-  }
-}
 
-// Llamar a la función de creación de tablas (sin await aquí, se ejecuta asíncrona)
-createTables();
+      // Enviar email de confirmación al cliente
+      const transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      const mailOptions = {
+        from: `"Anacleto Visitas" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: 'Confirmação de visita técnica - Anacleto Esquadrias',
+        text: `Olá ${nome}, sua visita técnica foi agendada para ${data} no período da ${horario}. Em breve um técnico entrará em contato. Obrigado!`,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      res.json({ success: true, message: 'Visita agendada e e-mail enviado.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Erro ao processar solicitação.' });
+    }
+  });
+
+  return router;
+};
